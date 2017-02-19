@@ -6,4 +6,6 @@
     <string name="pref_title_launch_service">Launch service</string>
     <string name="notification_dispatch_on">Tap to LOCK screen</string>
     <string name="notification_dispatch_off">Tap to UNLOCK screen</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
 </resources>

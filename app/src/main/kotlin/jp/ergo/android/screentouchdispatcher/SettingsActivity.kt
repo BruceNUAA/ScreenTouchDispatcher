@@ -10,12 +10,30 @@ import android.os.Bundle
 import android.preference.Preference
 import android.preference.SwitchPreference
 import android.provider.Settings
+import android.widget.Space
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.AdView
 
 
 class SettingsActivity : SettingsActivityBase() {
+    var mAdView: AdView? = null
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.pref_general)
+
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-3940256099942544~3347511713");
+        mAdView = AdView(this)
+        mAdView?.adSize = AdSize.SMART_BANNER;
+        mAdView?.adUnitId = resources.getString(R.string.banner_ad_unit_id)
+
+        val adRequest = AdRequest.Builder().build()
+        mAdView?.loadAd(adRequest)
+        mAdView?.let {
+            listView.addFooterView(it)
+        }
 
         val switcher = findPreference("switcher") as SwitchPreference
         switcher.isChecked = isServiceRunning(ScreenTouchDispatcherService.javaClass)
@@ -25,9 +43,23 @@ class SettingsActivity : SettingsActivityBase() {
                     return@OnPreferenceChangeListener onSwitchChanged(newValue)
                 }
             }
-
             true
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mAdView?.resume();
+    }
+
+    override fun onPause() {
+        mAdView?.pause()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        mAdView?.destroy()
+        super.onDestroy()
     }
 
     private fun onSwitchChanged(newValue: Boolean): Boolean {
